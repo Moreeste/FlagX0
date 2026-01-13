@@ -12,10 +12,10 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/FlagX0.Web/FlagX0.Web.csproj", "src/FlagX0.Web/"]
-RUN dotnet restore "./src/FlagX0.Web/FlagX0.Web.csproj"
+COPY ["FlagX0.Web.csproj", "."]
+RUN dotnet restore "./FlagX0.Web.csproj"
 COPY . .
-WORKDIR "/src/src/FlagX0.Web"
+WORKDIR "/src/."
 RUN dotnet build "./FlagX0.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Esta fase se usa para publicar el proyecto de servicio que se copiará en la fase final.
