@@ -18,3 +18,9 @@ docker rm flagx0
 
 -- Eliminar imagen
 docker rmi image-flagx0
+
+-- Levantar docker compose
+docker-compose up -d
+
+-- Detener docker compose
+docker-compose down
