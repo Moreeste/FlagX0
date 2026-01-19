@@ -7,12 +7,17 @@ namespace FlagX0.Web.Controllers
 {
     [Authorize]
     [Route("[controller]")]
-    public class FlagsController(AddFlagUseCase addFlagUseCase) : Controller
+    public class FlagsController(AddFlagUseCase addFlagUseCase, GetFlagsUseCase getFlagsUseCase) : Controller
     {
         [HttpGet("")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var listFlags = await getFlagsUseCase.Execute();
+
+            return View(new FlagIndexViewModel()
+            {
+                Flags = listFlags
+            });
         }
 
         [HttpGet("create")]
