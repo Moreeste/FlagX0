@@ -1,4 +1,5 @@
-﻿using FlagX0.Web.Data;
+﻿using FlagX0.Web.Business.Mappers;
+using FlagX0.Web.Data;
 using FlagX0.Web.DTOs;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -14,11 +15,7 @@ namespace FlagX0.Web.Business.UseCases
             var response = await applicationDbContext.Flags.Where(x => x.UserId == userId)
                 .AsNoTracking().ToListAsync();
 
-            return response.Select(x => new FlagDto()
-            {
-                IsEnabled = x.Value,
-                Name = x.Name
-            }).ToList();
+            return response.ToDto();
         }
     }
 }
