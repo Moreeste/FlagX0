@@ -1,19 +1,17 @@
-﻿using FlagX0.Web.Data;
+﻿using FlagX0.Web.Business.UserInfo;
+using FlagX0.Web.Data;
 using FlagX0.Web.Data.Entities;
-using System.Security.Claims;
 
 namespace FlagX0.Web.Business.UseCases
 {
-    public class AddFlagUseCase(ApplicationDbContext applicationDbContext, IHttpContextAccessor httpContextAccessor)
+    public class AddFlagUseCase(ApplicationDbContext applicationDbContext, IFlagUserDetails userDetails)
     {
         public async Task<bool> Execute(string flagName, bool isActive)
         {
-            string userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
             FlagEntity entity = new()
             {
                 Name = flagName,
-                UserId = userId,
+                UserId = userDetails.UserId,
                 Value = isActive
             };
 
