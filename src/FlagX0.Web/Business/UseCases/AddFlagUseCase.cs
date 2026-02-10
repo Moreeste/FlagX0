@@ -1,12 +1,30 @@
 ﻿using FlagX0.Web.Business.UserInfo;
 using FlagX0.Web.Data;
 using FlagX0.Web.Data.Entities;
+using Microsoft.EntityFrameworkCore;
+using ROP;
 
 namespace FlagX0.Web.Business.UseCases
 {
     public class AddFlagUseCase(ApplicationDbContext applicationDbContext, IFlagUserDetails userDetails)
     {
-        public async Task<bool> Execute(string flagName, bool isActive)
+        public async Task<Result<bool>> Execute(string flagName, bool isActive)
+            => await ValidateFlag(flagName).Bind(x => AddFlagToDatabase(x, isActive));
+
+        private async Task<Result<string>> ValidateFlag(string flagName)
+        {
+            bool flagExists = await applicationDbContext.Flags.Where(f => f.UserId == userDetails.UserId
+            && f.Name.Equals(flagName)).AnyAsync();
+
+            if (flagExists)
+            {
+                return Result.Failure<string>("Flag name already exists.");
+            }
+
+            return flagName;
+        }
+
+        private async Task<Result<bool>> AddFlagToDatabase(string flagName, bool isActive)
         {
             FlagEntity entity = new()
             {
@@ -15,7 +33,7 @@ namespace FlagX0.Web.Business.UseCases
                 Value = isActive
             };
 
-            var response = applicationDbContext.Flags.AddAsync(entity);
+            _ = await applicationDbContext.Flags.AddAsync(entity);
             await applicationDbContext.SaveChangesAsync();
 
             return true;

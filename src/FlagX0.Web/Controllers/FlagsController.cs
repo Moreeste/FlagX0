@@ -2,6 +2,7 @@
 using FlagX0.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ROP;
 
 namespace FlagX0.Web.Controllers
 {
@@ -29,9 +30,19 @@ namespace FlagX0.Web.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> AddFlagToDatabase(FlagViewModel model)
         {
-            bool isCreated = await addFlagUseCase.Execute(model.Name, model.IsEnabled);
+            Result<bool> isCreated = await addFlagUseCase.Execute(model.Name, model.IsEnabled);
 
-            return RedirectToAction("Index");
+            if (isCreated.Success)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View("Create", new FlagViewModel()
+            {
+                Error = isCreated.Errors.First().Message,
+                IsEnabled = model.IsEnabled,
+                Name = model.Name
+            });
         }
     }
 }
