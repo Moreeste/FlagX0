@@ -8,7 +8,7 @@ namespace FlagX0.Web.Controllers
 {
     [Authorize]
     [Route("[controller]")]
-    public class FlagsController(AddFlagUseCase addFlagUseCase, GetFlagsUseCase getFlagsUseCase) : Controller
+    public class FlagsController(AddFlagUseCase addFlagUseCase, GetFlagsUseCase getFlagsUseCase, GetSingleFlagUseCase getSingleFlagUseCase) : Controller
     {
         [HttpGet("")]
         public async Task<IActionResult> Index()
@@ -42,6 +42,18 @@ namespace FlagX0.Web.Controllers
                 Error = isCreated.Errors.First().Message,
                 IsEnabled = model.IsEnabled,
                 Name = model.Name
+            });
+        }
+
+        [HttpGet("{flagName}")]
+        public async Task<IActionResult> GetSingle(string flagName, string? message)
+        {
+            var singleFlag = await getSingleFlagUseCase.Execute(flagName);
+
+            return View("SingleFlag", new SingleFlagViewModel()
+            {
+                Flag = singleFlag.Value,
+                Message = message
             });
         }
     }
