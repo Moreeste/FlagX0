@@ -1,4 +1,5 @@
 ﻿using FlagX0.Web.Business.UseCases;
+using FlagX0.Web.DTOs;
 using FlagX0.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace FlagX0.Web.Controllers
 {
     [Authorize]
     [Route("[controller]")]
-    public class FlagsController(AddFlagUseCase addFlagUseCase, GetFlagsUseCase getFlagsUseCase, GetSingleFlagUseCase getSingleFlagUseCase) : Controller
+    public class FlagsController(AddFlagUseCase addFlagUseCase, GetFlagsUseCase getFlagsUseCase, GetSingleFlagUseCase getSingleFlagUseCase, UpdateFlagUseCase updateFlagUseCase) : Controller
     {
         [HttpGet("")]
         public async Task<IActionResult> Index()
@@ -54,6 +55,18 @@ namespace FlagX0.Web.Controllers
             {
                 Flag = singleFlag.Value,
                 Message = message
+            });
+        }
+
+        [HttpPost("{flagName}")]
+        public async Task<IActionResult> Update(FlagDto flag)
+        {
+            var singleFlag = await updateFlagUseCase.Execute(flag);
+
+            return View("SingleFlag", new SingleFlagViewModel()
+            {
+                Flag = singleFlag.Value,
+                Message = singleFlag.Success ? "Updated correctly" : singleFlag.Errors.First().Message
             });
         }
     }

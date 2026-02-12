@@ -20,6 +20,7 @@ builder.Services.AddScoped<IFlagUserDetails, FlagUserDetails>();
 builder.Services.AddScoped<AddFlagUseCase>();
 builder.Services.AddScoped<GetFlagsUseCase>();
 builder.Services.AddScoped<GetSingleFlagUseCase>();
+builder.Services.AddScoped<UpdateFlagUseCase>();
 
 var app = builder.Build();
 
