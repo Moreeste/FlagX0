@@ -21,6 +21,7 @@ builder.Services.AddScoped<AddFlagUseCase>();
 builder.Services.AddScoped<GetFlagsUseCase>();
 builder.Services.AddScoped<GetSingleFlagUseCase>();
 builder.Services.AddScoped<UpdateFlagUseCase>();
+builder.Services.AddScoped<DeleteFlagUseCase>();
 
 var app = builder.Build();
 

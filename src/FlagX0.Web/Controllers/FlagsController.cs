@@ -9,7 +9,13 @@ namespace FlagX0.Web.Controllers
 {
     [Authorize]
     [Route("[controller]")]
-    public class FlagsController(AddFlagUseCase addFlagUseCase, GetFlagsUseCase getFlagsUseCase, GetSingleFlagUseCase getSingleFlagUseCase, UpdateFlagUseCase updateFlagUseCase) : Controller
+    public class FlagsController(
+        AddFlagUseCase addFlagUseCase, 
+        GetFlagsUseCase getFlagsUseCase, 
+        GetSingleFlagUseCase getSingleFlagUseCase, 
+        UpdateFlagUseCase updateFlagUseCase,
+        DeleteFlagUseCase deleteFlagUseCase
+        ) : Controller
     {
         [HttpGet("")]
         public async Task<IActionResult> Index()
@@ -67,6 +73,23 @@ namespace FlagX0.Web.Controllers
             {
                 Flag = singleFlag.Value,
                 Message = singleFlag.Success ? "Updated correctly" : singleFlag.Errors.First().Message
+            });
+        }
+
+        [HttpGet("delete/{flagName}")]
+        public async Task<IActionResult> Delete(string flagName)
+        {
+            var isDeleted = await deleteFlagUseCase.Execute(flagName);
+
+            if (isDeleted.Success)
+            {
+                return RedirectToAction("");
+            }
+
+            return RedirectToAction("GetSingle", new
+            {
+                flagName,
+                message = "Update correctly"
             });
         }
     }
