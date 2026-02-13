@@ -17,7 +17,8 @@ namespace FlagX0.Web.Business.UseCases
 
         private async Task<Result<bool>> DeleteEntity(FlagEntity entity)
         {
-            applicationDbContext.Flags.Remove(entity);
+            entity.IsDeleted = true;
+            entity.DeletedTimeUtc = DateTime.UtcNow;
             await applicationDbContext.SaveChangesAsync();
             return true;
         }

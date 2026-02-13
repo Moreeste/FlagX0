@@ -7,5 +7,12 @@ namespace FlagX0.Web.Data
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
     {
         public DbSet<FlagEntity> Flags { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<FlagEntity>().HasQueryFilter(x => !x.IsDeleted);
+
+            base.OnModelCreating(builder);
+        }
     }
 }
