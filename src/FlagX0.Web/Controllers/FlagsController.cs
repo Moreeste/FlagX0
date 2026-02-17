@@ -18,13 +18,14 @@ namespace FlagX0.Web.Controllers
         ) : Controller
     {
         [HttpGet("")]
-        public async Task<IActionResult> Index()
+        [HttpGet("{page:int}")]
+        public async Task<IActionResult> Index(string? search, int page = 1, int size = 5)
         {
-            var listFlags = await getFlagsUseCase.Execute();
+            var listFlags = (await getFlagsUseCase.Execute(search, page, size)).Throw();
 
             return View(new FlagIndexViewModel()
             {
-                Flags = listFlags
+                Pagination = listFlags
             });
         }
 
