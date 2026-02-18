@@ -9,19 +9,13 @@ namespace FlagX0.Web.Controllers
 {
     [Authorize]
     [Route("[controller]")]
-    public class FlagsController(
-        AddFlagUseCase addFlagUseCase, 
-        GetFlagsUseCase getFlagsUseCase, 
-        GetSingleFlagUseCase getSingleFlagUseCase, 
-        UpdateFlagUseCase updateFlagUseCase,
-        DeleteFlagUseCase deleteFlagUseCase
-        ) : Controller
+    public class FlagsController(FlagsUseCases flags) : Controller
     {
         [HttpGet("")]
         [HttpGet("{page:int}")]
         public async Task<IActionResult> Index(string? search, int page = 1, int size = 5)
         {
-            var listFlags = (await getFlagsUseCase.Execute(search, page, size)).Throw();
+            var listFlags = (await flags.GetAll.Execute(search, page, size)).Throw();
 
             return View(new FlagIndexViewModel()
             {
@@ -38,7 +32,7 @@ namespace FlagX0.Web.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> AddFlagToDatabase(FlagViewModel model)
         {
-            Result<bool> isCreated = await addFlagUseCase.Execute(model.Name, model.IsEnabled);
+            Result<bool> isCreated = await flags.Add.Execute(model.Name, model.IsEnabled);
 
             if (isCreated.Success)
             {
@@ -56,7 +50,7 @@ namespace FlagX0.Web.Controllers
         [HttpGet("{flagName}")]
         public async Task<IActionResult> GetSingle(string flagName, string? message)
         {
-            var singleFlag = await getSingleFlagUseCase.Execute(flagName);
+            var singleFlag = await flags.Get.Execute(flagName);
 
             return View("SingleFlag", new SingleFlagViewModel()
             {
@@ -68,7 +62,7 @@ namespace FlagX0.Web.Controllers
         [HttpPost("{flagName}")]
         public async Task<IActionResult> Update(FlagDto flag)
         {
-            var singleFlag = await updateFlagUseCase.Execute(flag);
+            var singleFlag = await flags.Update.Execute(flag);
 
             return View("SingleFlag", new SingleFlagViewModel()
             {
@@ -80,7 +74,7 @@ namespace FlagX0.Web.Controllers
         [HttpGet("delete/{flagName}")]
         public async Task<IActionResult> Delete(string flagName)
         {
-            var isDeleted = await deleteFlagUseCase.Execute(flagName);
+            var isDeleted = await flags.Delete.Execute(flagName);
 
             if (isDeleted.Success)
             {

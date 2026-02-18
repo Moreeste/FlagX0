@@ -6,7 +6,7 @@ using FlagX0.Web.DTOs;
 using Microsoft.EntityFrameworkCore;
 using ROP;
 
-namespace FlagX0.Web.Business.UseCases
+namespace FlagX0.Web.Business.UseCases.Flags
 {
     public class GetFlagsUseCase(ApplicationDbContext applicationDbContext, IFlagUserDetails userDetails)
     {

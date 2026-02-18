@@ -4,7 +4,7 @@ using FlagX0.Web.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using ROP;
 
-namespace FlagX0.Web.Business.UseCases
+namespace FlagX0.Web.Business.UseCases.Flags
 {
     public class AddFlagUseCase(ApplicationDbContext applicationDbContext, IFlagUserDetails userDetails)
     {
