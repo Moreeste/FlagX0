@@ -11,7 +11,17 @@ namespace FlagX0.Web.Business.UseCases
     public class GetFlagsUseCase(ApplicationDbContext applicationDbContext, IFlagUserDetails userDetails)
     {
         public async Task<Result<PaginationDto<FlagDto>>> Execute(string? search, int page, int size)
-            => await GetFromDb(search, page, size)
+            => await ValidatePage(page).Fallback(_ =>
+            {
+                page = 1;
+                return Result.Unit;
+            })
+            .Bind(_ => ValidatePageSize(size).Fallback(_ =>
+            {
+                size = 5;
+                return Result.Unit;
+            })).Async()
+            .Bind(x => GetFromDb(search, page, size))
             .Map(x => x.ToDto())
             .Combine(x => TotalElements(search))
             .Map(x => new PaginationDto<FlagDto>(x.Item1, x.Item2, size, page, search));
@@ -41,6 +51,27 @@ namespace FlagX0.Web.Business.UseCases
             }
 
             return await query.CountAsync();
+        }
+
+        private Result<Unit> ValidatePage(int page)
+        {
+            if (page < 1)
+            {
+                return Result.Failure("page not supported");
+            }
+
+            return Result.Unit;
+        }
+
+        private Result<Unit> ValidatePageSize(int pageSize)
+        {
+            int[] allowedValues = [5, 10, 15];
+            if (!allowedValues.Contains(pageSize))
+            {
+                return Result.Failure("page size not supported");
+            }
+
+            return Result.Unit;
         }
     }
 }
