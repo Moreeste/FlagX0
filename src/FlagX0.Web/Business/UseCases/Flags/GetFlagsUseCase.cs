@@ -27,14 +27,14 @@ namespace FlagX0.Web.Business.UseCases.Flags
 
         private async Task<Result<List<FlagEntity>>> GetFromDb(string? search, int page, int size)
         {
-            var query = applicationDbContext.Flags
-                .Skip(size * (page - 1))
-                .Take(size);
+            IQueryable<FlagEntity> query = applicationDbContext.Flags;
 
             if (!string.IsNullOrWhiteSpace(search))
             {
                 query = query.Where(f => f.Name.Contains(search));
             }
+            
+            query = query.Skip(size * (page - 1)).Take(size);
 
             return await query.ToListAsync();
         }
