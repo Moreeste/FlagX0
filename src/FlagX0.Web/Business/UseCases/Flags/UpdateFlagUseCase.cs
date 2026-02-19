@@ -1,5 +1,4 @@
 ﻿using FlagX0.Web.Business.Mappers;
-using FlagX0.Web.Business.UserInfo;
 using FlagX0.Web.Data;
 using FlagX0.Web.Data.Entities;
 using FlagX0.Web.DTOs;
@@ -8,7 +7,7 @@ using ROP;
 
 namespace FlagX0.Web.Business.UseCases.Flags
 {
-    public class UpdateFlagUseCase(ApplicationDbContext applicationDbContext, IFlagUserDetails userDetails)
+    public class UpdateFlagUseCase(ApplicationDbContext applicationDbContext)
     {
         public async Task<Result<FlagDto>> Execute(FlagDto dto)
             => await VerifyIsTheOnlyOneWithThatName(dto)
@@ -18,8 +17,7 @@ namespace FlagX0.Web.Business.UseCases.Flags
 
         private async Task<Result<FlagDto>> VerifyIsTheOnlyOneWithThatName(FlagDto dto)
         {
-            bool alreadyExists = await applicationDbContext.Flags.AnyAsync(f => f.UserId == userDetails.UserId
-            && f.Name.Equals(dto.Name) && f.Id != dto.Id);
+            bool alreadyExists = await applicationDbContext.Flags.AnyAsync(f => f.Name.Equals(dto.Name) && f.Id != dto.Id);
 
             if (alreadyExists)
             {
@@ -30,7 +28,7 @@ namespace FlagX0.Web.Business.UseCases.Flags
         }
 
         private async Task<Result<FlagEntity>> GetFromDb(int id)
-            => await applicationDbContext.Flags.Where(f => f.UserId == userDetails.UserId && f.Id == id).SingleAsync();
+            => await applicationDbContext.Flags.Where(f => f.Id == id).SingleAsync();
 
         private async Task<Result<FlagEntity>> Update(FlagEntity entity, FlagDto dto)
         {

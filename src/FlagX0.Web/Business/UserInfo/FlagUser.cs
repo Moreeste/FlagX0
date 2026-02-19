@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Security.Claims;
 
 namespace FlagX0.Web.Business.UserInfo
 {
@@ -7,14 +7,9 @@ namespace FlagX0.Web.Business.UserInfo
         string UserId { get; }
     }
 
-    public class FlagUserDetails(IHttpContextAccessor httpContextAccessor, UserManager<IdentityUser> userManager) : IFlagUserDetails
+    public class FlagUserDetails(IHttpContextAccessor httpContextAccessor) : IFlagUserDetails
     {
-        public string UserId
-        {
-            get
-            {
-                return userManager.GetUserId(httpContextAccessor.HttpContext!.User) ?? throw new InvalidOperationException("User is not authenticated.");
-            }
-        }
+        public string UserId => httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier) 
+            ?? throw new Exception("This workflow require authentication");
     }
 }

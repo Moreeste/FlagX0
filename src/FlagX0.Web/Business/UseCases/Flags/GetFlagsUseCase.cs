@@ -1,5 +1,4 @@
 ﻿using FlagX0.Web.Business.Mappers;
-using FlagX0.Web.Business.UserInfo;
 using FlagX0.Web.Data;
 using FlagX0.Web.Data.Entities;
 using FlagX0.Web.DTOs;
@@ -8,7 +7,7 @@ using ROP;
 
 namespace FlagX0.Web.Business.UseCases.Flags
 {
-    public class GetFlagsUseCase(ApplicationDbContext applicationDbContext, IFlagUserDetails userDetails)
+    public class GetFlagsUseCase(ApplicationDbContext applicationDbContext)
     {
         public async Task<Result<PaginationDto<FlagDto>>> Execute(string? search, int page, int size)
             => await ValidatePage(page).Fallback(_ =>
@@ -29,7 +28,6 @@ namespace FlagX0.Web.Business.UseCases.Flags
         private async Task<Result<List<FlagEntity>>> GetFromDb(string? search, int page, int size)
         {
             var query = applicationDbContext.Flags
-                .Where(f => f.UserId == userDetails.UserId)
                 .Skip(size * (page - 1))
                 .Take(size);
 
@@ -43,14 +41,12 @@ namespace FlagX0.Web.Business.UseCases.Flags
 
         private async Task<Result<int>> TotalElements(string? search)
         {
-            var query = applicationDbContext.Flags.Where(f => f.UserId == userDetails.UserId);
-
             if (!string.IsNullOrWhiteSpace(search))
             {
-                query = query.Where(f => f.Name.Contains(search));
+                return await applicationDbContext.Flags.Where(a => a.Name.Contains(search)).CountAsync();
             }
 
-            return await query.CountAsync();
+            return await applicationDbContext.Flags.CountAsync();
         }
 
         private Result<Unit> ValidatePage(int page)

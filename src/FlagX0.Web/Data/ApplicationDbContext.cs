@@ -1,16 +1,17 @@
-﻿using FlagX0.Web.Data.Entities;
+﻿using FlagX0.Web.Business.UserInfo;
+using FlagX0.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlagX0.Web.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IFlagUserDetails flagUserDetails) : IdentityDbContext(options)
     {
         public DbSet<FlagEntity> Flags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<FlagEntity>().HasQueryFilter(x => !x.IsDeleted);
+            builder.Entity<FlagEntity>().HasQueryFilter(x => !x.IsDeleted && x.UserId == flagUserDetails.UserId);
 
             base.OnModelCreating(builder);
         }

@@ -1,5 +1,4 @@
 ﻿using FlagX0.Web.Business.Mappers;
-using FlagX0.Web.Business.UserInfo;
 using FlagX0.Web.Data;
 using FlagX0.Web.Data.Entities;
 using FlagX0.Web.DTOs;
@@ -8,14 +7,14 @@ using ROP;
 
 namespace FlagX0.Web.Business.UseCases.Flags
 {
-    public class GetSingleFlagUseCase(ApplicationDbContext applicationDbContext, IFlagUserDetails userDetails)
+    public class GetSingleFlagUseCase(ApplicationDbContext applicationDbContext)
     {
         public async Task<Result<FlagDto>> Execute(string flagName)
             => await GetFromDb(flagName).Map(x => x.ToDto());
 
         private async Task<Result<FlagEntity>> GetFromDb(string flagName)
             => await applicationDbContext.Flags
-            .Where(f => f.UserId == userDetails.UserId && f.Name.Equals(flagName))
+            .Where(f => f.Name.Equals(flagName))
             .AsNoTracking().SingleAsync();
     }
 }

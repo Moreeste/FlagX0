@@ -13,8 +13,7 @@ namespace FlagX0.Web.Business.UseCases.Flags
 
         private async Task<Result<string>> ValidateFlag(string flagName)
         {
-            bool flagExists = await applicationDbContext.Flags.Where(f => f.UserId == userDetails.UserId
-            && f.Name.Equals(flagName)).AnyAsync();
+            bool flagExists = await applicationDbContext.Flags.Where(f => f.Name.Equals(flagName)).AnyAsync();
 
             if (flagExists)
             {
