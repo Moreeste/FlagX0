@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/FlagX0.Web/FlagX0.Web.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FlagX0.UnitTests/FlagX0.UnitTests.csproj" Id="c61d4acc-76fb-42a1-b617-4b1caebddfdf" />
+  </Folder>
 </Solution>
