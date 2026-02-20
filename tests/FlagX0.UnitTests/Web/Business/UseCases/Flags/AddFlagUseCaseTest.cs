@@ -37,6 +37,24 @@ namespace FlagX0.UnitTests.Web.Business.UseCases.Flags
 
         }
 
+        [Fact]
+        public async Task WhenFlagDoesNotExist_ThenInsertedOnDb()
+        {
+            //Arrange
+            IFlagUserDetails flagUserDetails = new FlagUserDetailsStub();
+            ApplicationDbContext inMemoryDb = GetInMemoryDbContext(flagUserDetails);
+
+
+            //Act
+            AddFlagUseCase addFlagUseCase = new AddFlagUseCase(inMemoryDb, flagUserDetails);
+            var result = await addFlagUseCase.Execute("FlagName", true);
+
+
+            //Assert
+            Assert.True(result.Success);
+            Assert.True(result.Value);
+        }
+
         private ApplicationDbContext GetInMemoryDbContext(IFlagUserDetails flagUserDetails)
         {
             DbContextOptions<ApplicationDbContext> databaseOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
