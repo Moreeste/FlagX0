@@ -7,6 +7,7 @@ using ROP;
 
 namespace FlagX0.Web.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize]
     [Route("[controller]")]
     public class FlagsController(FlagsUseCases flags) : Controller

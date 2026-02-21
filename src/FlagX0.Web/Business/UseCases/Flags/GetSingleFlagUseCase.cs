@@ -10,11 +10,11 @@ namespace FlagX0.Web.Business.UseCases.Flags
     public class GetSingleFlagUseCase(ApplicationDbContext applicationDbContext)
     {
         public async Task<Result<FlagDto>> Execute(string flagName)
-            => await GetFromDb(flagName).Map(x => x.ToDto());
+            => await GetFromDb(flagName).Bind(flag  => flag ?? Result.NotFound<FlagEntity>("Flag does not exist"))
+            .Map(x => x.ToDto());
 
-        private async Task<Result<FlagEntity>> GetFromDb(string flagName)
-            => await applicationDbContext.Flags
-            .Where(f => f.Name.Equals(flagName))
-            .AsNoTracking().SingleAsync();
+        private async Task<Result<FlagEntity?>> GetFromDb(string flagname)
+        => await applicationDbContext.Flags.Where(a => a.Name.Equals(flagname))
+            .AsNoTracking().FirstOrDefaultAsync();
     }
 }
